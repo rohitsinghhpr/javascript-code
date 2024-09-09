@@ -1,0 +1,312 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>My Ecommerce App</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        /* navbar */
+        .navbar {
+            background-color: aliceblue;
+            padding: 1em;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            position: relative;
+        }
+
+        .navbar .logo {
+            font-size: 2em;
+            color: #3f3a3a;
+            margin: 0 1em;
+        }
+
+        .navbar .search-bar {
+            flex-grow: 1;
+        }
+
+        .navbar .search-bar input {
+            display: block;
+            width: 100%;
+            padding: 0.5em;
+        }
+
+        .navbar a {
+            display: block;
+            text-decoration: none;
+            color: #333;
+            position: relative;
+        }
+
+        .navbar .menu-wrapper {
+            flex-grow: 2;
+        }
+
+        .navbar .menu-wrapper>ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        .navbar .menu-wrapper>ul>li {
+            padding: 0.5em;
+        }
+
+        .navbar .menu-wrapper>ul>.dropdown>a::after {
+            content: '\2BC6';
+            display: inline-block;
+        }
+
+        .navbar .menu-wrapper>ul>.dropdown .dropdown-menu {
+            list-style: none;
+            padding: 0.5em;
+            margin: 0;
+            display: none;
+            background-color: #a1a0f8;
+            width: 300px;
+            position: absolute;
+            right: 0;
+        }
+
+        .navbar .menu-wrapper>ul>.dropdown .dropdown-menu li {
+            background-color: #fff;
+            border: 1px solid #333;
+            margin: 0.5em 0;
+            padding: 0.5em;
+        }
+
+        .navbar .menu-wrapper>ul>.dropdown:hover .dropdown-menu {
+            display: block;
+        }
+
+        .navbar .menu-wrapper>ul>.dropdown #my-cart li {
+            display: flex;
+            justify-content: space-around;
+        }
+
+        #main {
+            width: 90%;
+            margin: 50px auto;
+            /* padding: 1em; */
+            /* background-color: #f9f9f9; */
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+        .row {
+            display: flex;
+            flex-wrap: wrap;
+        }
+
+        .row > .col-4{
+            flex-grow:1;
+            flex-basis:200;
+        }
+
+        /* .col-3 {
+            width: 33.333%;
+        }
+
+        .col-4 {
+            width: 25%;
+        } */
+
+        .card {
+            margin: 0.5em;
+            border: 1px solid #333;
+        }
+
+        .card .card-img {
+            display: block;
+            width:250px;
+            margin:auto;
+            /* max-width: 400px; */
+            height: 300px;
+        }
+
+        .card .card-body {
+            border-top: 1px solid #333;
+            padding: 1em;
+        }
+
+        .card .card-body .card-title {
+            font-size: 1.2em;
+            ;
+        }
+
+        .card .card-body .btn {
+            background-color: transparent;
+            border: 1px solid #333;
+            border-radius: 0.25em;
+            padding: 0.5em;
+            margin: 0 0.1em;
+            font-weight: bold;
+            user-select: none;
+        }
+
+        .card .card-body .btn:active {
+            background-color: #333;
+            color: #fff;
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav class="navbar">
+        <a class="logo" href="./index.html">My Ecommerce</a>
+        <div class="menu-wrapper">
+            <ul class="menu">
+                <li class="dropdown">
+                    <a href="javascript:void(0)">My Cart</a>
+                    <ul class="dropdown-menu" id="my-cart"></ul>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <main id="main" class="flex"></main>
+
+    <script>
+        function add_to_cart(item) {
+            // using curry function
+            return function () {
+                const data = {
+                    img: item.image,
+                    title: item.title,
+                    price: item.price
+                }
+                localStorage.setItem("product-" + item.id, JSON.stringify(data));
+                console.log("product is added to addtocart", JSON.stringify(data));
+            }
+        }
+
+        function remove_from_cart(item) {
+            // using curry function
+            return function () {
+                localStorage.removeItem("product-" + item.id);
+            }
+        }
+
+        function check_product_in_sotorage(item) {
+            let result = localStorage.getItem("product-" + item.id);
+            if (result) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+
+        function include_in_cart(item) {
+            let li = document.createElement("li");
+            let title = document.createElement("span");
+            title.setAttribute("title", item.title);
+            title.innerText = item.title.slice(0, 20) + "...";
+            let price = document.createElement("span");
+            price.innerText = item.price;
+            li.append(title);
+            li.append(price);
+            document.getElementById("my-cart").append(li);
+        }
+
+        async function getProducts() {
+            let loading = document.createElement("h1"),
+                row = document.createElement("div");
+            main = document.getElementById("main");
+            // row
+            row.setAttribute("class", "row");
+            // loading
+            loading.setAttribute("id", 'loading');
+            loading.style.textAlign = "center";
+            loading.style.color = "blue";
+            loading.innerText = "Loading...";
+            main.append(loading);
+            let data = await fetch('https://fakestoreapi.com/products');
+            let products = await data.json();
+            products.forEach((product) => {
+                //  variable declaration
+                let col = document.createElement("div"),
+                    card = document.createElement("div"),
+                    img = document.createElement("img"),
+                    card_body = document.createElement("div"),
+                    title = document.createElement("h1"),
+                    price = document.createElement("h3"),
+                    btn_wrapper = document.createElement("div"),
+                    addtocart_btn = document.createElement("button"),
+                    removefromcart_btn = document.createElement("button"),
+                    wish_btn = document.createElement("button");
+                // col
+                col.setAttribute("class", "col-4");
+                // card
+                card.setAttribute("class", "card");
+                // img
+                img.setAttribute("class", "card-img");
+                img.setAttribute("src", product.image);
+                // card_body
+                card_body.setAttribute("class", "card-body");
+                // title
+                title.setAttribute("class", "card-title");
+                title.setAttribute("title", product.title);
+                title.innerText = product.title.slice(0, 20) + "...";
+                // price
+                price.innerText = "Price $" + product.price;
+                // btn_wrapper 
+                btn_wrapper.setAttribute("class", "text-center");
+                // addtocart_btn
+                addtocart_btn.setAttribute("type", "button");
+                addtocart_btn.setAttribute("class", "btn");
+                addtocart_btn.innerText = 'Add To Cart';
+                addtocart_btn.addEventListener("click", add_to_cart(product));
+                // removefromcart_btn
+                removefromcart_btn.setAttribute("type", "button");
+                removefromcart_btn.setAttribute("class", "btn");
+                removefromcart_btn.innerText = 'Remove To Cart';
+                removefromcart_btn.style.backgroundColor = '#f85555'
+                removefromcart_btn.addEventListener("click", remove_from_cart(product));
+                // wish_btn
+                wish_btn.setAttribute("type", "button");
+                wish_btn.setAttribute("class", "btn");
+                wish_btn.innerText = 'Add To Wish'
+                // inCart - either have true or false.
+                const inCart = check_product_in_sotorage(product);
+                // appending...
+                btn_wrapper.append(inCart ? removefromcart_btn : addtocart_btn);
+                btn_wrapper.append(wish_btn);
+                card_body.append(title);
+                card_body.append(price);
+                card_body.append(btn_wrapper);
+                card.append(img);
+                card.append(card_body);
+                col.append(card);
+                row.append(col);
+                if (inCart) {
+                    include_in_cart(product);
+                }
+            });
+            // removing loading ele from the main ele.
+            main.removeChild(document.getElementById("loading"));
+            // inserting all porducts in main ele.
+            main.append(row);
+        }
+        getProducts();
+
+
+    </script>
+</body>
+
+</html>

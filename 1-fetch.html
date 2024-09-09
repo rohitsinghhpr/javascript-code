@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+   <meta charset="UTF-8">
+   <meta http-equiv="X-UA-Compatible" content="IE=edge">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title>Fetch</title>
+   <style>
+      body {
+         font-family: cursive;
+      }
+
+      #container {
+         width: 80%;
+         margin: 50px auto;
+      }
+
+      .quote-card {
+         margin: 0.5em 0;
+         padding: 0.4em;
+         border-radius: 0.5em;
+         background-color: #7cf37c;
+         border: 2px solid #333;
+      }
+
+      .quote {
+         margin: 0;
+         margin-bottom: 0.1em;
+         font-size: 1.3em;
+      }
+
+      .author {
+         margin: 0;
+         display: inline-block;
+         background-color: #f03265;
+         color: #fff;
+         padding: 0.2em 0.4em;
+         border-radius: 0.5em;
+      }
+   </style>
+</head>
+
+<body>
+   <main id="container"></main>
+   <script>
+      function insertQuote(author, id, quote) {
+         // card
+         let quote_card = document.createElement("div");
+         quote_card.setAttribute("class", "quote-card");
+         quote_card.setAttribute("id", `quotes-${id}`);
+         // quote
+         let quoteH3 = document.createElement("h3");
+         quoteH3.setAttribute("class", "quote");
+         quoteH3.innerText = quote;
+         // auther 
+         let autherH4 = document.createElement("h4");
+         autherH4.setAttribute("class", "author");
+         autherH4.innerText = author;
+         // appending  
+         quote_card.append(quoteH3);
+         quote_card.append(autherH4);
+         // dom
+         document.getElementById("container").append(quote_card);
+      }
+
+      const url = 'https://dummyjson.com/quotes';
+      fetch(url).then((response) => {
+         let result = response.json();
+         return result;
+      }).then((result) => {
+         result.quotes.forEach(element => {
+            insertQuote(element.author, element.id, element.quote)
+         });
+      })
+   </script>
+</body>
+
+</html>

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>event propagation</title>
+    <style>
+        div {
+            padding: 10px;
+        }
+
+        #div1 {
+            background-color: red;
+        }
+
+        #div2 {
+            background-color: green;
+        }
+
+        #div3 {
+            background-color: blue;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Event Bubbling (bottom to up)</h1>
+    <div id="div1">
+        <h1>div - 1</h1>
+        <div id="div2">
+            <h2>div - 2</h2>
+            <div id="div3">
+                <h3>div -3</h3>
+            </div>
+        </div>
+    </div>
+    <h3>Event Capturing (top to bottom)</h3>
+    <p>pass a third parameter as a true boolean value and then clicking div - 3 first div - 1, div - 2 and then div -3 event will trigger</p>
+    <p>If we wanted to modify this so that only the button’s click event is triggered, we could use Event.stopPropagation() to immediately stop the event from bubbling to its parent.</p>
+    <script>
+        document.getElementById("div1").addEventListener("click", function (event) {
+            alert("div 1 has clicked");
+            console.log(event);
+        });
+        document.getElementById("div2").addEventListener("click", function (event) {
+            alert("div 2 has clicked");
+            console.log(event);
+        });
+        document.getElementById("div3").addEventListener("click", function (event) {
+            alert("div 3 has clicked");
+            console.log(event);
+        });
+    </script>
+</body>
+
+</html>
