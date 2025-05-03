@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Drag and Drop</title>
+    <style>
+        .container {
+            display: flex;
+            background-color: turquoise;
+        }
+
+        .col {
+            flex-grow: 1;
+            margin: 1em;
+        }
+
+        .col ul {
+            margin: 0;
+            padding: 0;
+            list-style: none;
+        }
+
+        .col ul li {
+            display: block;
+            background-color: white;
+            color: black;
+            padding: 1em;
+            font-weight: bold;
+            border-bottom: 2px solid blue;
+        }
+
+        .col ul li:hover {
+            background-color: #f8f8f8;
+        }
+
+        .col ul li:first-child {
+            border-top-left-radius: 1em;
+            border-top-right-radius: 1em;
+        }
+
+        .col ul li:last-child {
+            border-bottom-left-radius: 1em;
+            border-bottom-right-radius: 1em;
+            border-bottom: 0;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <div class="col">
+            <ul>
+                <li draggable="true">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ut, sunt?</li>
+                <li draggable="true">Odio in autem illo facilis sed pariatur distinctio cupiditate eius!</li>
+                <li draggable="true">Aspernatur laboriosam eius dolorum? Iste vel ut et aspernatur vero!</li>
+                <li draggable="true">Corrupti, asperiores! Ullam nihil nobis ut voluptatem unde. Architecto, laboriosam.
+                </li>
+                <li draggable="true">Delectus vitae tempore tenetur dolorum pariatur velit laboriosam amet molestias.
+                </li>
+                <li draggable="true">Officiis error sapiente veritatis harum culpa repellat provident corporis dolor!
+                </li>
+                <li draggable="true">Numquam quae quas deleniti natus doloribus architecto excepturi consectetur earum!
+                </li>
+                <li draggable="true">Soluta assumenda quos ducimus iure nihil provident, quod expedita ea.</li>
+                <li draggable="true">Totam rerum dolor illum eveniet tempora quasi impedit nisi. Voluptatibus?</li>
+                <li draggable="true">Ad assumenda incidunt voluptas ut atque dolores sapiente est magni?</li>
+            </ul>
+        </div>
+        <div class="col">
+            <ul>
+                <li draggable="true">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ut, sunt?</li>
+                <li draggable="true">Odio in autem illo facilis sed pariatur distinctio cupiditate eius!</li>
+                <li draggable="true">Aspernatur laboriosam eius dolorum? Iste vel ut et aspernatur vero!</li>
+                <li draggable="true">Corrupti, asperiores! Ullam nihil nobis ut voluptatem unde. Architecto, laboriosam.
+                </li>
+                <li draggable="true">Delectus vitae tempore tenetur dolorum pariatur velit laboriosam amet molestias.
+                </li>
+                <li draggable="true">Officiis error sapiente veritatis harum culpa repellat provident corporis dolor!
+                </li>
+                <li draggable="true">Numquam quae quas deleniti natus doloribus architecto excepturi consectetur earum!
+                </li>
+                <li draggable="true">Soluta assumenda quos ducimus iure nihil provident, quod expedita ea.</li>
+                <li draggable="true">Totam rerum dolor illum eveniet tempora quasi impedit nisi. Voluptatibus?</li>
+                <li draggable="true">Ad assumenda incidunt voluptas ut atque dolores sapiente est magni?</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+
+        let li = document.querySelectorAll("li");
+        let col = document.querySelectorAll(".col");
+
+        li.forEach((ele) => {
+            ele.addEventListener("dragstart", (e) => {
+                e.target.style.background = "red";
+                e.target.style.opacity = 0.5;
+                e.dataTransfer.setData("text/plain", e.target.outerHTML);
+                console.log(e);
+            });
+            ele.addEventListener("dragend", (e) => {
+                e.target.style.background = "white";
+                e.target.style.opacity = 1;
+            });
+        });
+
+        col.forEach((ele) => {
+            ele.addEventListener("dragover", (e) => {
+                e.preventDefault();
+                ele.style.border = "1px solid red";
+            });
+            ele.addEventListener("dragleave", () => {
+                ele.style.border = ""; 
+            });
+            ele.addEventListener("drop", (e) => {
+                e.preventDefault();
+                ele.style.border = "";
+                const dragedHTML = e.dataTransfer.getData("text/plain");
+                console.log("dragedElement", dragedHTML);
+                const draggedElement = document.createElement("li");
+                draggedElement.innerHTML = dragedHTML.trim();
+                ele.querySelector("ul").appendChild(draggedElement.firstChild);
+            });
+        });
+
+    </script>
+
+</body>
+
+</html>
